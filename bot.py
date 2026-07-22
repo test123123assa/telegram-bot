@@ -116,6 +116,16 @@ DEFAULT_SETTINGS = {
     'emoji_warning': "⚠️",
     'emoji_info': "ℹ️",
     
+    # Индивидуальные цвета кнопок (success/danger/primary/secondary или пусто)
+    'btn_edits_style': "",
+    'btn_deletes_style': "", 
+    'btn_blur_style': "",
+    'btn_on_style': "",
+    'btn_off_style': "",
+    'btn_copy_style': "",
+    'btn_instruction_style': "",
+    'btn_back_style': "",
+    
     # Управление функциями бота
     'cmd_start_enabled': "1",
     'cmd_settings_enabled': "1", 
@@ -368,6 +378,24 @@ def get_setting_description(key):
         'emoji_success': 'Эмодзи успеха',
         'emoji_danger': 'Эмодзи ошибки',
         'emoji_warning': 'Эмодзи предупреждения',
+        'emoji_info': 'Эмодзи информации',
+        
+        # Индивидуальные цвета кнопок
+        'btn_edits_style': 'Цвет кнопки редактирования',
+        'btn_deletes_style': 'Цвет кнопки удаления',
+        'btn_blur_style': 'Цвет кнопки блюра',
+        'btn_on_style': 'Цвет кнопки включения',
+        'btn_off_style': 'Цвет кнопки выключения',
+        'btn_copy_style': 'Цвет кнопки копирования',
+        'btn_instruction_style': 'Цвет кнопки инструкции',
+        'btn_back_style': 'Цвет кнопки назад',
+        
+        # Управление командами
+        'cmd_start_enabled': 'Включить команду /start',
+        'cmd_settings_enabled': 'Включить команду /settings',
+        'cmd_help_enabled': 'Включить команду /help',
+        'cmd_stats_enabled': 'Включить команду /stats',
+        'cmd_chat_enabled': 'Включить команду /chat'
         'emoji_info': 'Эмодзи информации',
         
         # Стили кнопок
@@ -725,10 +753,25 @@ def kb_start():
     btn_copy_text = get_custom_setting('btn_copy_username').replace('{bot_name}', bot_name)
     btn_instruction_text = get_custom_setting('btn_instruction')
     
-    return {"inline_keyboard": [
-        [{"text": btn_copy_text, "callback_data": "copy_username"}],
-        [{"text": btn_instruction_text, "url": instruction_link}]
-    ]}
+    # Получаем индивидуальные стили
+    copy_style = get_custom_setting('btn_copy_style', '')
+    instruction_style = get_custom_setting('btn_instruction_style', '')
+    
+    buttons = []
+    
+    # Кнопка копирования
+    copy_btn = {"text": btn_copy_text, "callback_data": "copy_username"}
+    if copy_style:
+        copy_btn["style"] = copy_style
+    buttons.append([copy_btn])
+    
+    # Кнопка инструкции  
+    instruction_btn = {"text": btn_instruction_text, "url": instruction_link}
+    if instruction_style:
+        instruction_btn["style"] = instruction_style
+    buttons.append([instruction_btn])
+    
+    return {"inline_keyboard": buttons}
 
 def kb_settings(user_id):
     s = get_settings(user_id)
@@ -743,24 +786,32 @@ def kb_settings(user_id):
     emoji_on = get_custom_setting('emoji_success', '✅')
     emoji_off = get_custom_setting('emoji_danger', '❌')
     
+    # Получаем индивидуальные стили
+    edits_style = get_custom_setting('btn_edits_style', '')
+    deletes_style = get_custom_setting('btn_deletes_style', '')
+    blur_style = get_custom_setting('btn_blur_style', '')
+    back_style = get_custom_setting('btn_back_style', '')
+    
     # Создаем цветные кнопки с подсветкой
-    def create_colored_button(text, callback, is_active):
-        if is_active:
-            return {
-                "text": f"{emoji_on} {text}",
-                "callback_data": callback
-            }
-        else:
-            return {
-                "text": f"{emoji_off} {text}",
-                "callback_data": callback
-            }
+    def create_colored_button(text, callback, is_active, style=""):
+        emoji = emoji_on if is_active else emoji_off
+        btn = {
+            "text": f"{emoji} {text}",
+            "callback_data": callback
+        }
+        if style:
+            btn["style"] = style
+        return btn
     
     return {"inline_keyboard": [
-        [create_colored_button(btn_edits, "s_edits", s["notify_edits"])],
-        [create_colored_button(btn_deletes, "s_deletes", s["notify_deletes"])],
-        [create_colored_button(btn_blur, "s_blur", s["blur_media"])],
-        [{"text": btn_back, "callback_data": "back_start"}]
+        [create_colored_button(btn_edits, "s_edits", s["notify_edits"], edits_style)],
+        [create_colored_button(btn_deletes, "s_deletes", s["notify_deletes"], deletes_style)],
+        [create_colored_button(btn_blur, "s_blur", s["blur_media"], blur_style)],
+        [{
+            "text": btn_back, 
+            "callback_data": "back_start",
+            **({"style": back_style} if back_style else {})
+        }]
     ]}
 
 def kb_detail(stype, val):
@@ -768,21 +819,28 @@ def kb_detail(stype, val):
     btn_off = get_custom_setting('btn_turn_off')
     btn_back = get_custom_setting('btn_back')
     
+    # Получаем индивидуальные стили
+    on_style = get_custom_setting('btn_on_style', '')
+    off_style = get_custom_setting('btn_off_style', '')
+    back_style = get_custom_setting('btn_back_style', '')
+    
     # Цветные кнопки включения/выключения
     if val:
-        btn = {
-            "text": btn_off,
-            "callback_data": f"off_{stype}"
-        }
+        btn = {"text": btn_off, "callback_data": f"off_{stype}"}
+        if off_style:
+            btn["style"] = off_style
     else:
-        btn = {
-            "text": btn_on,
-            "callback_data": f"on_{stype}"
-        }
+        btn = {"text": btn_on, "callback_data": f"on_{stype}"}
+        if on_style:
+            btn["style"] = on_style
+    
+    back_btn = {"text": btn_back, "callback_data": "back_settings"}
+    if back_style:
+        back_btn["style"] = back_style
     
     return {"inline_keyboard": [
         [btn],
-        [{"text": btn_back, "callback_data": "back_settings"}]
+        [back_btn]
     ]}
 
 # ===== ДИЗАЙН ПАНЕЛЬ С ПОЛНОЙ КАСТОМИЗАЦИЕЙ =====
@@ -796,7 +854,7 @@ def kb_design_main():
         [{"text": get_custom_setting('design_btn_icons'), "callback_data": "design_icons"}],
         [{"text": get_custom_setting('design_btn_formatting'), "callback_data": "design_formatting"}],
         [{"text": "🌈 Кнопки интерфейса", "callback_data": "design_interface"}],
-        [{"text": "🎨 Цвета и эмодзи", "callback_data": "design_styles"}],
+        [{"text": "🎨 Цвета кнопок", "callback_data": "design_styles"}],
         [{"text": "⚙️ Управление функциями", "callback_data": "design_commands"}],
         [{"text": get_custom_setting('design_btn_reset'), "callback_data": "design_reset"}]
     ]}
@@ -932,27 +990,76 @@ def kb_interface_emojis():
     ]}
 
 def kb_design_styles():
-    """Настройка эмодзи и цветовых схем"""
+    """Настройка цветов кнопок"""
     return {"inline_keyboard": [
+        [{"text": "🔘 Кнопки настроек", "callback_data": "style_settings_buttons"}],
+        [{"text": "🏠 Кнопки главного меню", "callback_data": "style_main_buttons"}], 
+        [{"text": "🔙 Кнопки навигации", "callback_data": "style_nav_buttons"}],
         [{"text": "✅ Эмодзи успеха", "callback_data": "edit_emoji_success"}],
         [{"text": "❌ Эмодзи ошибки", "callback_data": "edit_emoji_danger"}],
-        [{"text": "⚠️ Эмодзи предупреждения", "callback_data": "edit_emoji_warning"}],
-        [{"text": "ℹ️ Эмодзи информации", "callback_data": "edit_emoji_info"}],
-        [{"text": "🎨 Цветовые схемы", "callback_data": "design_color_schemes"}],
-        [{"text": "👀 Предпросмотр эмодзи", "callback_data": "preview_button_styles"}],
+        [{"text": "🎨 Быстрые схемы", "callback_data": "design_color_schemes"}],
         [{"text": "‹ Назад", "callback_data": "design_main"}]
     ]}
 
+def kb_style_settings_buttons():
+    """Настройка цветов кнопок настроек"""
+    return {"inline_keyboard": [
+        [{"text": "✏️ Кнопка редактирования", "callback_data": "set_btn_color_edits"}],
+        [{"text": "🗑 Кнопка удаления", "callback_data": "set_btn_color_deletes"}],
+        [{"text": "🎭 Кнопка блюра", "callback_data": "set_btn_color_blur"}],
+        [{"text": "✅ Кнопка включения", "callback_data": "set_btn_color_on"}],
+        [{"text": "❌ Кнопка выключения", "callback_data": "set_btn_color_off"}],
+        [{"text": "‹ Назад к стилям", "callback_data": "design_styles"}]
+    ]}
+
+def kb_style_main_buttons():
+    """Настройка цветов кнопок главного меню"""
+    return {"inline_keyboard": [
+        [{"text": "📋 Кнопка копирования", "callback_data": "set_btn_color_copy"}],
+        [{"text": "📖 Кнопка инструкции", "callback_data": "set_btn_color_instruction"}],
+        [{"text": "‹ Назад к стилям", "callback_data": "design_styles"}]
+    ]}
+
+def kb_style_nav_buttons():
+    """Настройка цветов кнопок навигации"""
+    return {"inline_keyboard": [
+        [{"text": "🔙 Кнопка назад", "callback_data": "set_btn_color_back"}],
+        [{"text": "‹ Назад к стилям", "callback_data": "design_styles"}]
+    ]}
+
+def kb_color_picker(button_type):
+    """Выбор цвета для кнопки"""
+    current_style = get_custom_setting(f'btn_{button_type}_style', '')
+    
+    def make_btn(color, style, is_current=False):
+        check = "✅ " if is_current else ""
+        return {"text": f"{check}{color}", "callback_data": f"apply_color_{button_type}_{style}"}
+    
+    return {"inline_keyboard": [
+        [make_btn("🔵 Синий", "primary", current_style == "primary")],
+        [make_btn("🟢 Зелёный", "success", current_style == "success")], 
+        [make_btn("🔴 Красный", "danger", current_style == "danger")],
+        [make_btn("⚪ Очистить цвет", "clear", current_style == "")],
+        [{"text": "‹ Назад", "callback_data": f"style_{get_button_group(button_type)}_buttons"}]
+    ]}
+
+def get_button_group(button_type):
+    """Определяет группу кнопки для навигации"""
+    if button_type in ["edits", "deletes", "blur", "on", "off"]:
+        return "settings"
+    elif button_type in ["copy", "instruction"]:
+        return "main"
+    elif button_type in ["back"]:
+        return "nav"
+    return "settings"
+
 def kb_color_schemes():
-    """Предустановленные цветовые схемы"""
+    """Быстрые цветовые схемы"""
     return {"inline_keyboard": [
         [{"text": "🟢 Зелёная тема", "callback_data": "scheme_green"}],
         [{"text": "🔴 Красная тема", "callback_data": "scheme_red"}],
         [{"text": "🔵 Синяя тема", "callback_data": "scheme_blue"}],
-        [{"text": "🟡 Жёлтая тема", "callback_data": "scheme_yellow"}],
-        [{"text": "🟣 Фиолетовая тема", "callback_data": "scheme_purple"}],
-        [{"text": "⚫ Тёмная тема", "callback_data": "scheme_dark"}],
-        [{"text": "⚪ Светлая тема", "callback_data": "scheme_light"}],
+        [{"text": "🗑 Очистить все цвета", "callback_data": "scheme_clear"}],
         [{"text": "‹ Назад", "callback_data": "design_styles"}]
     ]}
 
@@ -1128,10 +1235,81 @@ def handle_design_callback(cb):
     
     elif data == "design_styles":
         edit_txt(chat_id, msg_id,
-            "🎨 <b>Настройка цветов и эмодзи</b>\n\nВыберите элемент для настройки:\n\n"
-            "💡 <i>Цвета в Telegram задаются через эмодзи</i>",
+            "🎨 <b>Настройка цветов кнопок</b>\n\nВыберите группу кнопок:\n\n"
+            "💡 <i>Можно задать индивидуальный цвет каждой кнопке</i>",
             markup=kb_design_styles())
         answer_cb(cb_id)
+    
+    # Обработчики групп кнопок
+    elif data == "style_settings_buttons":
+        edit_txt(chat_id, msg_id,
+            "🔘 <b>Цвета кнопок настроек</b>\n\nВыберите кнопку для изменения цвета:",
+            markup=kb_style_settings_buttons())
+        answer_cb(cb_id)
+    
+    elif data == "style_main_buttons":
+        edit_txt(chat_id, msg_id,
+            "🏠 <b>Цвета кнопок главного меню</b>\n\nВыберите кнопку для изменения цвета:",
+            markup=kb_style_main_buttons())
+        answer_cb(cb_id)
+    
+    elif data == "style_nav_buttons":
+        edit_txt(chat_id, msg_id,
+            "🔙 <b>Цвета кнопок навигации</b>\n\nВыберите кнопку для изменения цвета:",
+            markup=kb_style_nav_buttons())
+        answer_cb(cb_id)
+    
+    # Обработчики выбора кнопки для покраски
+    elif data.startswith("set_btn_color_"):
+        button_type = data[14:]  # убираем "set_btn_color_"
+        button_names = {
+            "edits": "✏️ Редактирование",
+            "deletes": "🗑 Удаление", 
+            "blur": "🎭 Блюр",
+            "on": "✅ Включение",
+            "off": "❌ Выключение",
+            "copy": "📋 Копирование",
+            "instruction": "📖 Инструкция",
+            "back": "🔙 Назад"
+        }
+        button_name = button_names.get(button_type, button_type)
+        edit_txt(chat_id, msg_id,
+            f"🎨 <b>Цвет кнопки: {button_name}</b>\n\nВыберите цвет:\n\n"
+            f"💡 <i>Текущий цвет: {get_custom_setting(f'btn_{button_type}_style', 'не задан')}</i>",
+            markup=kb_color_picker(button_type))
+        answer_cb(cb_id)
+    
+    # Применение цвета
+    elif data.startswith("apply_color_"):
+        parts = data[12:].split("_", 1)  # убираем "apply_color_"
+        if len(parts) == 2:
+            button_type, color = parts
+            if color == "clear":
+                set_custom_setting(f'btn_{button_type}_style', '')
+                color_name = "сброшен"
+            else:
+                set_custom_setting(f'btn_{button_type}_style', color)
+                color_names = {"primary": "синий", "success": "зелёный", "danger": "красный"}
+                color_name = color_names.get(color, color)
+            
+            button_names = {
+                "edits": "✏️ Редактирование",
+                "deletes": "🗑 Удаление", 
+                "blur": "🎭 Блюр",
+                "on": "✅ Включение",
+                "off": "❌ Выключение",
+                "copy": "📋 Копирование",
+                "instruction": "📖 Инструкция",
+                "back": "🔙 Назад"
+            }
+            button_name = button_names.get(button_type, button_type)
+            
+            edit_txt(chat_id, msg_id,
+                f"✅ <b>Цвет применён!</b>\n\n"
+                f"🎨 Кнопка: {button_name}\n"
+                f"🌈 Цвет: {color_name}",
+                markup=kb_color_picker(button_type))
+            answer_cb(cb_id, f"Цвет {color_name} применён к кнопке {button_name}!", alert=True)
     
     elif data == "design_color_schemes":
         edit_txt(chat_id, msg_id,
@@ -1143,12 +1321,22 @@ def handle_design_callback(cb):
     elif data.startswith("scheme_"):
         scheme = data[7:]  # убираем "scheme_"
         apply_color_scheme(scheme)
-        edit_txt(chat_id, msg_id,
-            f"🎨 <b>Цветовая схема применена!</b>\n\n"
-            f"✅ Активирована схема: <b>{scheme.title()}</b>\n\n"
-            f"💡 Все кнопки теперь используют новые цвета",
-            markup=kb_color_schemes())
-        answer_cb(cb_id, "✅ Схема применена!", alert=True)
+        
+        scheme_names = {
+            "green": "Зелёная",
+            "red": "Красная", 
+            "blue": "Синяя",
+            "clear": "Очистка цветов"
+        }
+        scheme_name = scheme_names.get(scheme, scheme.title())
+        
+        if scheme == "clear":
+            message = "🗑 <b>Все цвета очищены!</b>\n\nВсе кнопки вернулись к стандартному виду"
+        else:
+            message = f"🎨 <b>Схема применена!</b>\n\n✅ Активирована: <b>{scheme_name}</b>\n\n💡 Все кнопки получили единый стиль"
+            
+        edit_txt(chat_id, msg_id, message, markup=kb_color_schemes())
+        answer_cb(cb_id, f"✅ {scheme_name} применена!", alert=True)
     
     elif data == "preview_demo":
         answer_cb(cb_id, "👀 Это демонстрация стиля кнопки!", alert=True)
@@ -1273,7 +1461,9 @@ def handle_design_callback(cb):
         if format_type in format_codes:
             start_tag, end_tag, description = format_codes[format_type]
             code_example = f"{start_tag}ваш текст{end_tag}"
-            answer_cb(cb_id, f"📋 Код для {description}:\n{code_example}", alert=True)
+            # ТЕСТ: Отправим отдельным сообщением вместо alert
+            send_msg(chat_id, f"📋 <b>Код для {description}:</b>\n\n<code>{code_example}</code>\n\n💡 Скопируйте и используйте в своих текстах")
+            answer_cb(cb_id)
         else:
             answer_cb(cb_id, "❌ Неизвестный тип форматирования", alert=True)
     
@@ -1478,36 +1668,35 @@ def reset_design_settings():
 
 def apply_color_scheme(scheme):
     """Применяет предустановленную цветовую схему"""
-    schemes = {
-        "green": {
-            "emoji_success": "🟢",
-            "emoji_danger": "🔴"
-        },
-        "red": {
-            "emoji_success": "🔴", 
-            "emoji_danger": "⚫"
-        },
-        "blue": {
-            "emoji_success": "🔵",
-            "emoji_danger": "⚪"
-        },
-        "yellow": {
-            "emoji_success": "🟡",
-            "emoji_danger": "⚫"
-        },
-        "purple": {
-            "emoji_success": "🟣",
-            "emoji_danger": "⚪"
-        },
-        "dark": {
-            "emoji_success": "⚪",
-            "emoji_danger": "⚫"
-        },
-        "light": {
-            "emoji_success": "✅",
-            "emoji_danger": "❌"
-        }
-    }
+    if scheme == "green":
+        style = "success"
+        emoji_success = "🟢"
+        emoji_danger = "🔴"
+    elif scheme == "red":
+        style = "danger" 
+        emoji_success = "🔴"
+        emoji_danger = "⚫"
+    elif scheme == "blue":
+        style = "primary"
+        emoji_success = "🔵"
+        emoji_danger = "⚪"
+    elif scheme == "clear":
+        # Очищаем все стили
+        for btn_type in ["edits", "deletes", "blur", "on", "off", "copy", "instruction", "back"]:
+            set_custom_setting(f'btn_{btn_type}_style', '')
+        set_custom_setting('emoji_success', '✅')
+        set_custom_setting('emoji_danger', '❌')
+        return
+    else:
+        return
+    
+    # Применяем стиль ко всем кнопкам
+    for btn_type in ["edits", "deletes", "blur", "on", "off", "copy", "instruction", "back"]:
+        set_custom_setting(f'btn_{btn_type}_style', style)
+    
+    # Обновляем эмодзи
+    set_custom_setting('emoji_success', emoji_success)
+    set_custom_setting('emoji_danger', emoji_danger)
     
     if scheme in schemes:
         for key, value in schemes[scheme].items():
@@ -1705,7 +1894,8 @@ def on_callback(cb):
     if (data.startswith("design_") or data.startswith("edit_") or data.startswith("preview_") or 
         data.startswith("save_") or data.startswith("delete_") or data.startswith("fmt_") or 
         data.startswith("interface_") or data.startswith("scheme_") or data.startswith("demo_") or
-        data.startswith("toggle_cmd_") or
+        data.startswith("toggle_cmd_") or data.startswith("style_") or data.startswith("set_btn_color_") or 
+        data.startswith("apply_color_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
         data == "format_examples" or data == "preview_demo" or data == "emoji_helper"):
         handle_design_callback(cb)

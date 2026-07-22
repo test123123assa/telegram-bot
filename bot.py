@@ -845,10 +845,11 @@ def kb_design_main():
         [{"text": get_custom_setting('design_btn_templates'), "callback_data": "design_templates"}],
         [{"text": get_custom_setting('design_btn_config'), "callback_data": "design_config"}],
         [{"text": get_custom_setting('design_btn_icons'), "callback_data": "design_icons"}],
-        [{"text": get_custom_setting('design_btn_formatting'), "callback_data": "design_formatting"}],
+        [{"text": "🔧 ФОРМАТИРОВАНИЕ", "callback_data": "design_formatting"}],  # ХАРДКОД ДЛЯ ТЕСТА
         [{"text": "🌈 Кнопки интерфейса", "callback_data": "design_interface"}],
         [{"text": "🎨 Цвета кнопок", "callback_data": "design_styles"}],
         [{"text": "⚙️ Управление функциями", "callback_data": "design_commands"}],
+        [{"text": "🧪 СУПЕР ТЕСТ", "callback_data": "super_test"}],  # СУПЕР ТЕСТОВАЯ КНОПКА
         [{"text": get_custom_setting('design_btn_reset'), "callback_data": "design_reset"}]
     ]}
 
@@ -1171,8 +1172,19 @@ def handle_design_callback(cb):
     chat_id = cb["message"]["chat"]["id"]
     msg_id = cb["message"]["message_id"]
     
+    print(f"[DESIGN DEBUG] Received: {data}")
+    
     if not is_admin(user_id):
+        print(f"[DESIGN DEBUG] Access denied for user {user_id}")
         answer_cb(cb_id, "⛔ Нет доступа", alert=True)
+        return
+    
+    print(f"[DESIGN DEBUG] Processing {data} for admin {user_id}")
+    
+    # СУПЕР ПРОСТОЙ ТЕСТ
+    if data == "super_test":
+        send_msg(chat_id, "🧪 <b>СУПЕР ТЕСТ УСПЕШЕН!</b>\n\nОбработчик design callback работает!")
+        answer_cb(cb_id, "✅ Тест в handle_design_callback работает!", alert=True)
         return
     
     # Навигация по разделам
@@ -1390,6 +1402,7 @@ def handle_design_callback(cb):
         answer_cb(cb_id)
     
     elif data == "design_formatting":
+        print(f"[FORMATTING DEBUG] Processing design_formatting")
         # НОВЫЙ ОБРАБОТЧИК ФОРМАТИРОВАНИЯ
         edit_txt(chat_id, msg_id,
             "🔧 <b>ФОРМАТИРОВАНИЕ ТЕКСТА</b>\n\n"
@@ -1405,6 +1418,7 @@ def handle_design_callback(cb):
             "🎯 <b>Выберите действие:</b>",
             markup=kb_design_formatting())
         answer_cb(cb_id)
+        print(f"[FORMATTING DEBUG] Sent formatting menu")
     
     elif data == "design_commands":
         edit_txt(chat_id, msg_id,
@@ -1887,6 +1901,9 @@ def on_callback(cb):
     msg_id = cb["message"]["message_id"]
     has_photo = "photo" in cb["message"]
 
+    # СУПЕР ОТЛАДКА - ЛОГИРУЕМ ВСЕ КОЛЛБЭКИ
+    print(f"[CALLBACK DEBUG] data='{data}', user_id={user_id}, is_admin={is_admin(user_id)}")
+
     def edit(text, markup):
         if has_photo:
             edit_cap(chat_id, msg_id, text, markup=markup)
@@ -1903,7 +1920,8 @@ def on_callback(cb):
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
         data == "format_examples" or data == "preview_demo" or data == "emoji_helper" or
         data == "design_formatting" or data == "html_helper" or data == "html_examples" or 
-        data == "emoji_id_help" or data == "html_test"):  # ТЕСТ КНОПКА
+        data == "emoji_id_help" or data == "html_test" or data == "super_test"):  # СУПЕР ТЕСТ
+        print(f"[ROUTING DEBUG] Sending to handle_design_callback: {data}")
         handle_design_callback(cb)
         return
 

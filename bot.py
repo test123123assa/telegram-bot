@@ -1455,6 +1455,7 @@ def on_callback(cb):
     # Обработка дизайн-панели
     if (data.startswith("design_") or data.startswith("edit_") or data.startswith("preview_") or 
         data.startswith("save_") or data.startswith("delete_") or data.startswith("fmt_") or 
+        data.startswith("interface_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
         data == "format_examples"):
         handle_design_callback(cb)
@@ -2535,4 +2536,3 @@ api("setMyCommands", commands=[
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
-    

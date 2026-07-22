@@ -2613,15 +2613,17 @@ def on_message(msg):
     elif text == "/stats":
         if is_command_enabled("/stats"):
             with get_db() as conn:
-            total_del = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=? AND deleted=1", (user_id,)).fetchone()[0]
-            total_edit = conn.execute("SELECT COUNT(*) FROM edits WHERE owner_id=?", (user_id,)).fetchone()[0]
-            total_msg = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=?", (user_id,)).fetchone()[0]
-        send_msg(chat_id,
-            f"📊 <b>Ваша статистика</b>\n"
-            f"━━━━━━━━━━━━━━━\n"
-            f"💾 Сохранено сообщений: <b>{total_msg}</b>\n"
-            f"🗑 Поймано удалений: <b>{total_del}</b>\n"
-            f"✏️ Поймано редактирований: <b>{total_edit}</b>")
+                total_del = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=? AND deleted=1", (user_id,)).fetchone()[0]
+                total_edit = conn.execute("SELECT COUNT(*) FROM edits WHERE owner_id=?", (user_id,)).fetchone()[0]
+                total_msg = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=?", (user_id,)).fetchone()[0]
+            send_msg(chat_id,
+                f"📊 <b>Ваша статистика</b>\n"
+                f"━━━━━━━━━━━━━━━\n"
+                f"💾 Сохранено сообщений: <b>{total_msg}</b>\n"
+                f"🗑 Поймано удалений: <b>{total_del}</b>\n"
+                f"✏️ Поймано редактирований: <b>{total_edit}</b>")
+        else:
+            send_msg(chat_id, "⚠️ Эта команда временно отключена администратором.")
     elif text in ("/admin", "/admin@v373ments_bot"):
         handle_admin_command(chat_id, user_id)
     elif text == "/design" and is_admin(user_id):

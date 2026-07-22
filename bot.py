@@ -378,7 +378,7 @@ def get_setting_description(key):
         'emoji_success': 'Эмодзи успеха',
         'emoji_danger': 'Эмодзи ошибки',
         'emoji_warning': 'Эмодзи предупреждения',
-        'emoji_info': 'Эмодзи информации',
+        'emoji_info': 'Эмодзи информации'
         
         # Индивидуальные цвета кнопок
         'btn_edits_style': 'Цвет кнопки редактирования',
@@ -1687,13 +1687,9 @@ def apply_color_scheme(scheme):
     for btn_type in ["edits", "deletes", "blur", "on", "off", "copy", "instruction", "back"]:
         set_custom_setting(f'btn_{btn_type}_style', style)
     
-    # Обновляем эмодзи
-    set_custom_setting('emoji_success', emoji_success)
-    set_custom_setting('emoji_danger', emoji_danger)
-    
-    if scheme in schemes:
-        for key, value in schemes[scheme].items():
-            set_custom_setting(key, value)
+    # Обновляем эмодзи (НЕ автоматически меняем эмодзи по цвету как просил пользователь)
+    # set_custom_setting('emoji_success', emoji_success)
+    # set_custom_setting('emoji_danger', emoji_danger)
 
 def preview_button_styles(chat_id, user_id):
     """Показывает предпросмотр всех стилей кнопок"""

@@ -396,13 +396,6 @@ def get_setting_description(key):
         'cmd_help_enabled': 'Включить команду /help',
         'cmd_stats_enabled': 'Включить команду /stats',
         'cmd_chat_enabled': 'Включить команду /chat'
-        'emoji_info': 'Эмодзи информации',
-        
-        # Стили кнопок
-        'btn_style_success': 'Стиль кнопок успеха (success/primary/secondary)',
-        'btn_style_danger': 'Стиль кнопок ошибки (danger/warning/light)',
-        'btn_style_primary': 'Основной стиль кнопок',
-        'btn_style_secondary': 'Вторичный стиль кнопок'
     }
     return descriptions.get(key, f'Настройка {key}')
 

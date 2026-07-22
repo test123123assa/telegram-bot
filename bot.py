@@ -14,6 +14,8 @@ import io
 
 import re
 
+import os
+
 # ===== КОНФИГУРАЦИЯ =====
 
 TOKEN = "8078793115:AAFyXHvNgUQbrQbGeMxqySo0hGrGsN9N5Cw"

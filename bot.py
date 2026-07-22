@@ -378,7 +378,7 @@ def get_setting_description(key):
         'emoji_success': 'Эмодзи успеха',
         'emoji_danger': 'Эмодзи ошибки',
         'emoji_warning': 'Эмодзи предупреждения',
-        'emoji_info': 'Эмодзи информации'
+        'emoji_info': 'Эмодзи информации',
         
         # Индивидуальные цвета кнопок
         'btn_edits_style': 'Цвет кнопки редактирования',

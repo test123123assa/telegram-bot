@@ -365,7 +365,13 @@ def get_setting_description(key):
         'emoji_success': 'Эмодзи успеха',
         'emoji_danger': 'Эмодзи ошибки',
         'emoji_warning': 'Эмодзи предупреждения',
-        'emoji_info': 'Эмодзи информации'
+        'emoji_info': 'Эмодзи информации',
+        
+        # Стили кнопок
+        'btn_style_success': 'Стиль кнопок успеха (success/primary/secondary)',
+        'btn_style_danger': 'Стиль кнопок ошибки (danger/warning/light)',
+        'btn_style_primary': 'Основной стиль кнопок',
+        'btn_style_secondary': 'Вторичный стиль кнопок'
     }
     return descriptions.get(key, f'Настройка {key}')
 
@@ -720,14 +726,25 @@ def kb_settings(user_id):
     emoji_on = get_custom_setting('emoji_success', '✅')
     emoji_off = get_custom_setting('emoji_danger', '❌')
     
-    e = emoji_on if s["notify_edits"] else emoji_off
-    d = emoji_on if s["notify_deletes"] else emoji_off
-    b = emoji_on if s["blur_media"] else emoji_off
+    # Создаем цветные кнопки с подсветкой
+    def create_colored_button(text, callback, is_active):
+        if is_active:
+            return {
+                "text": f"{emoji_on} {text}",
+                "callback_data": callback,
+                "style": get_custom_setting('btn_style_success', 'success')
+            }
+        else:
+            return {
+                "text": f"{emoji_off} {text}",
+                "callback_data": callback, 
+                "style": get_custom_setting('btn_style_danger', 'danger')
+            }
     
     return {"inline_keyboard": [
-        [{"text": f"{e} {btn_edits}", "callback_data": "s_edits"}],
-        [{"text": f"{d} {btn_deletes}", "callback_data": "s_deletes"}],
-        [{"text": f"{b} {btn_blur}", "callback_data": "s_blur"}],
+        [create_colored_button(btn_edits, "s_edits", s["notify_edits"])],
+        [create_colored_button(btn_deletes, "s_deletes", s["notify_deletes"])],
+        [create_colored_button(btn_blur, "s_blur", s["blur_media"])],
         [{"text": btn_back, "callback_data": "back_start"}]
     ]}
 
@@ -736,10 +753,22 @@ def kb_detail(stype, val):
     btn_off = get_custom_setting('btn_turn_off')
     btn_back = get_custom_setting('btn_back')
     
-    btn = (btn_off, f"off_{stype}") if val else (btn_on, f"on_{stype}")
+    # Цветные кнопки включения/выключения
+    if val:
+        btn = {
+            "text": btn_off,
+            "callback_data": f"off_{stype}",
+            "style": get_custom_setting('btn_style_danger', 'danger')
+        }
+    else:
+        btn = {
+            "text": btn_on,
+            "callback_data": f"on_{stype}",
+            "style": get_custom_setting('btn_style_success', 'success')
+        }
     
     return {"inline_keyboard": [
-        [{"text": btn[0], "callback_data": btn[1]}],
+        [btn],
         [{"text": btn_back, "callback_data": "back_settings"}]
     ]}
 
@@ -754,6 +783,7 @@ def kb_design_main():
         [{"text": get_custom_setting('design_btn_icons'), "callback_data": "design_icons"}],
         [{"text": get_custom_setting('design_btn_formatting'), "callback_data": "design_formatting"}],
         [{"text": "🌈 Кнопки интерфейса", "callback_data": "design_interface"}],
+        [{"text": "🎨 Стили кнопок", "callback_data": "design_styles"}],
         [{"text": get_custom_setting('design_btn_reset'), "callback_data": "design_reset"}]
     ]}
 
@@ -885,6 +915,31 @@ def kb_interface_emojis():
         [{"text": "⚠️ Эмодзи предупреждения", "callback_data": "edit_emoji_warning"}],
         [{"text": "ℹ️ Эмодзи информации", "callback_data": "edit_emoji_info"}],
         [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_design_styles():
+    """Настройка стилей и цветов кнопок"""
+    return {"inline_keyboard": [
+        [{"text": "🟢 Стиль успеха (зелёный)", "callback_data": "edit_btn_style_success"}],
+        [{"text": "🔴 Стиль ошибки (красный)", "callback_data": "edit_btn_style_danger"}],
+        [{"text": "🔵 Основной стиль", "callback_data": "edit_btn_style_primary"}],
+        [{"text": "⚫ Вторичный стиль", "callback_data": "edit_btn_style_secondary"}],
+        [{"text": "🎨 Цветовые схемы", "callback_data": "design_color_schemes"}],
+        [{"text": "👀 Предпросмотр стилей", "callback_data": "preview_button_styles"}],
+        [{"text": "‹ Назад", "callback_data": "design_main"}]
+    ]}
+
+def kb_color_schemes():
+    """Предустановленные цветовые схемы"""
+    return {"inline_keyboard": [
+        [{"text": "🟢 Зелёная тема", "callback_data": "scheme_green"}],
+        [{"text": "🔴 Красная тема", "callback_data": "scheme_red"}],
+        [{"text": "🔵 Синяя тема", "callback_data": "scheme_blue"}],
+        [{"text": "🟡 Жёлтая тема", "callback_data": "scheme_yellow"}],
+        [{"text": "🟣 Фиолетовая тема", "callback_data": "scheme_purple"}],
+        [{"text": "⚫ Тёмная тема", "callback_data": "scheme_dark"}],
+        [{"text": "⚪ Светлая тема", "callback_data": "scheme_light"}],
+        [{"text": "‹ Назад", "callback_data": "design_styles"}]
     ]}
 
 def kb_design_formatting():
@@ -1034,6 +1089,50 @@ def handle_design_callback(cb):
             "💡 <i>Здесь можно изменить все тексты кнопок и элементов интерфейса</i>",
             markup=kb_design_interface())
         answer_cb(cb_id)
+    
+    elif data == "design_styles":
+        edit_txt(chat_id, msg_id,
+            "🎨 <b>Настройка стилей кнопок</b>\n\nВыберите стиль для настройки:\n\n"
+            "💡 <i>Настройте цвета и стили интерактивных элементов</i>",
+            markup=kb_design_styles())
+        answer_cb(cb_id)
+    
+    elif data == "design_color_schemes":
+        edit_txt(chat_id, msg_id,
+            "🎨 <b>Цветовые схемы</b>\n\nВыберите предустановленную тему:\n\n"
+            "💡 <i>Быстро примените готовую цветовую схему</i>",
+            markup=kb_color_schemes())
+        answer_cb(cb_id)
+    
+    elif data.startswith("scheme_"):
+        scheme = data[7:]  # убираем "scheme_"
+        apply_color_scheme(scheme)
+        edit_txt(chat_id, msg_id,
+            f"🎨 <b>Цветовая схема применена!</b>\n\n"
+            f"✅ Активирована схема: <b>{scheme.title()}</b>\n\n"
+            f"💡 Все кнопки теперь используют новые цвета",
+            markup=kb_color_schemes())
+        answer_cb(cb_id, "✅ Схема применена!", alert=True)
+    
+    elif data == "preview_demo":
+        answer_cb(cb_id, "👀 Это демонстрация стиля кнопки!", alert=True)
+    
+    elif data == "preview_button_styles":
+        preview_button_styles(chat_id, user_id)
+        answer_cb(cb_id)
+    
+    # Обработка демо-кнопок для предпросмотра стилей
+    elif data == "demo_on":
+        answer_cb(cb_id, "✅ Демо: включенная настройка", alert=True)
+    
+    elif data == "demo_off":
+        answer_cb(cb_id, "❌ Демо: выключенная настройка", alert=True)
+    
+    elif data == "demo_primary":
+        answer_cb(cb_id, "🔵 Демо: основной стиль кнопки", alert=True)
+    
+    elif data == "demo_secondary":
+        answer_cb(cb_id, "⚫ Демо: вторичный стиль кнопки", alert=True)
     
     # Обработка подменю интерфейса
     elif data == "interface_main":
@@ -1292,6 +1391,73 @@ def reset_design_settings():
         conn.commit()
     init_default_design()
 
+def apply_color_scheme(scheme):
+    """Применяет предустановленную цветовую схему"""
+    schemes = {
+        "green": {
+            "btn_style_success": "success",
+            "btn_style_danger": "secondary", 
+            "emoji_success": "✅",
+            "emoji_danger": "⭕"
+        },
+        "red": {
+            "btn_style_success": "secondary",
+            "btn_style_danger": "danger",
+            "emoji_success": "🔘",
+            "emoji_danger": "❌"
+        },
+        "blue": {
+            "btn_style_success": "primary",
+            "btn_style_danger": "secondary",
+            "emoji_success": "🔵", 
+            "emoji_danger": "⚪"
+        },
+        "yellow": {
+            "btn_style_success": "warning",
+            "btn_style_danger": "secondary",
+            "emoji_success": "🟡",
+            "emoji_danger": "⚫"
+        },
+        "purple": {
+            "btn_style_success": "info",
+            "btn_style_danger": "secondary", 
+            "emoji_success": "🟣",
+            "emoji_danger": "⚪"
+        },
+        "dark": {
+            "btn_style_success": "secondary",
+            "btn_style_danger": "danger",
+            "emoji_success": "⚪",
+            "emoji_danger": "⚫"
+        },
+        "light": {
+            "btn_style_success": "success",
+            "btn_style_danger": "light",
+            "emoji_success": "✅",
+            "emoji_danger": "❌"
+        }
+    }
+    
+    if scheme in schemes:
+        for key, value in schemes[scheme].items():
+            set_custom_setting(key, value)
+
+def preview_button_styles(chat_id, user_id):
+    """Показывает предпросмотр всех стилей кнопок"""
+    success_style = get_custom_setting('btn_style_success', 'success')
+    danger_style = get_custom_setting('btn_style_danger', 'danger')
+    success_emoji = get_custom_setting('emoji_success', '✅')
+    danger_emoji = get_custom_setting('emoji_danger', '❌')
+    
+    send_msg(chat_id,
+        "👀 <b>Предпросмотр стилей кнопок</b>\n\n"
+        f"🟢 Стиль успеха: <code>{success_style}</code>\n"
+        f"🔴 Стиль ошибки: <code>{danger_style}</code>\n"
+        f"✨ Эмодзи успеха: {success_emoji}\n"
+        f"❌ Эмодзи ошибки: {danger_emoji}\n\n"
+        f"💡 Нажмите на кнопки ниже, чтобы увидеть стили в действии:",
+        markup=create_demo_settings_keyboard(user_id))
+
 def handle_design_message(chat_id, user_id, msg):
     """Обработка сообщений в режиме редактирования дизайна"""
     state = get_admin_state(user_id)
@@ -1301,6 +1467,7 @@ def handle_design_message(chat_id, user_id, msg):
     setting_key = state.get("setting_key")
     if not setting_key:
         return False
+        
     # Проверяем команды и игнорируем их в режиме дизайна
     text = msg.get("text", "")
     if text.startswith("/"):
@@ -1438,6 +1605,23 @@ def on_settings(chat_id, user_id):
         caption=f"<b>{settings_title}</b>\n\n{settings_desc}",
         markup=kb_settings(user_id))
 
+def create_demo_settings_keyboard(user_id):
+    """Создает демо-клавиатуру настроек с примерами стилей"""
+    s = get_settings(user_id)
+    
+    success_style = get_custom_setting('btn_style_success', 'success')
+    danger_style = get_custom_setting('btn_style_danger', 'danger') 
+    success_emoji = get_custom_setting('emoji_success', '✅')
+    danger_emoji = get_custom_setting('emoji_danger', '❌')
+    
+    return {"inline_keyboard": [
+        [{"text": f"{success_emoji} Включенная настройка", "callback_data": "demo_on", "style": success_style}],
+        [{"text": f"{danger_emoji} Выключенная настройка", "callback_data": "demo_off", "style": danger_style}],
+        [{"text": "🔵 Основной стиль", "callback_data": "demo_primary", "style": "primary"}],
+        [{"text": "⚫ Вторичный стиль", "callback_data": "demo_secondary", "style": "secondary"}],
+        [{"text": "‹ Назад к стилям", "callback_data": "design_styles"}]
+    ]}
+
 def on_callback(cb):
     cb_id = cb["id"]
     data = cb["data"]
@@ -1455,9 +1639,9 @@ def on_callback(cb):
     # Обработка дизайн-панели
     if (data.startswith("design_") or data.startswith("edit_") or data.startswith("preview_") or 
         data.startswith("save_") or data.startswith("delete_") or data.startswith("fmt_") or 
-        data.startswith("interface_") or
+        data.startswith("interface_") or data.startswith("scheme_") or data.startswith("demo_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
-        data == "format_examples"):
+        data == "format_examples" or data == "preview_demo"):
         handle_design_callback(cb)
         return
 

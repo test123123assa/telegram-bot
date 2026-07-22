@@ -57,7 +57,68 @@ DEFAULT_SETTINGS = {
     'contact_icon': "📞",
     'location_icon': "📍",
     'poll_icon': "📊",
-    'unknown_icon': "❓"
+    'unknown_icon': "❓",
+    
+    # Кнопки интерфейса
+    'btn_copy_username': "📋 Скопировать {bot_name}",
+    'btn_instruction': "📖 Подробная инструкция", 
+    'btn_back': "‹ Назад",
+    'btn_settings_edits': "Уведомления об изменении",
+    'btn_settings_deletes': "Уведомления об удалении", 
+    'btn_settings_blur': "Блюр удаленных медиа",
+    'btn_turn_on': "✅ Включить",
+    'btn_turn_off': "❌ Выключить",
+    
+    # Тексты настроек  
+    'settings_title': "⚙️ Настройки",
+    'settings_description': "Выберите параметр для изменения:",
+    'setting_edits_title': "✏️ Уведомления об изменении",
+    'setting_edits_desc': "Если ваш собеседник изменит любое сообщение, бот мгновенно сохранит вам его старую и новую версию.",
+    'setting_deletes_title': "🗑️ Уведомления об удалении", 
+    'setting_deletes_desc': "Если ваш собеседник удалит любое сообщение, бот мгновенно сохранит его вам.",
+    'setting_blur_title': "🎭 Блюр удаленных медиа",
+    'setting_blur_desc': "Все удаленные медиа/фото будут приходить с эффектом блюра. Это особенно полезно, если вы находитесь в общественном месте.",
+    
+    # Сообщения об изменении статуса
+    'msg_enabled': "✅ Включено",
+    'msg_disabled': "❌ Выключено", 
+    'msg_saved': "💾 Сохранено!",
+    'msg_cancelled': "❌ Отменено",
+    'msg_reset_confirm': "🔄 Все настройки дизайна будут сброшены к стандартным. Вы уверены?",
+    'msg_reset_success': "✅ Настройки сброшены к стандартным значениям",
+    
+    # Заголовки разделов дизайна
+    'design_main_title': "🎨 Дизайн-панель бота",
+    'design_main_desc': "Выберите раздел для настройки:",
+    'design_images_title': "📷 Настройка изображений",
+    'design_images_desc': "Выберите изображение для изменения:\n\n💡 Отправьте фото или ссылку на изображение",
+    'design_texts_title': "📝 Настройка текстов", 
+    'design_texts_desc': "Выберите текст для изменения:\n\n💡 Можно использовать HTML разметку и плейсхолдеры",
+    'design_templates_title': "🎨 Настройка шаблонов",
+    'design_templates_desc': "Выберите шаблон для изменения:\n\n💡 Доступные плейсхолдеры:\n<code>{sender}</code> — отправитель\n<code>{time}</code> — время\n<code>{content}</code>, <code>{old_content}</code>, <code>{new_content}</code> — содержимое\n<code>{chat}</code> — чат",
+    'design_config_title': "⚙️ Настройка конфигурации",
+    'design_config_desc': "Выберите параметр для изменения:",
+    'design_icons_title': "🔧 Настройка иконок",
+    'design_icons_desc': "Выберите иконку для изменения:\n\n💡 Используйте эмодзи или текст",
+    
+    # Названия элементов дизайна
+    'design_btn_images': "📷 Изображения",
+    'design_btn_texts': "📝 Тексты", 
+    'design_btn_templates': "🎨 Шаблоны",
+    'design_btn_config': "⚙️ Настройки",
+    'design_btn_icons': "🔧 Иконки",
+    'design_btn_formatting': "🎭 Форматирование",
+    'design_btn_reset': "🔄 Сброс",
+    
+    # Стили и цвета кнопок
+    'btn_style_success': "success",
+    'btn_style_danger': "danger",
+    'btn_style_primary': "primary", 
+    'btn_style_secondary': "secondary",
+    'emoji_success': "✅",
+    'emoji_danger': "❌",
+    'emoji_warning': "⚠️",
+    'emoji_info': "ℹ️"
 }
 
 # ===== БАЗА ДАННЫХ =====
@@ -217,22 +278,94 @@ def get_setting_type(key):
 def get_setting_description(key):
     """Возвращает описание настройки"""
     descriptions = {
+        # Изображения
         'start_image': 'Изображение для команды /start',
         'welcome_image': 'Изображение при подключении бота',
         'settings_image': 'Изображение в настройках',
         'whitelist_on_image': 'Изображение при включении белого списка',
         'whitelist_off_image': 'Изображение при выключении белого списка',
+        
+        # Основные тексты
         'start_text': 'Текст приветствия /start',
         'welcome_text': 'Текст при подключении',
         'help_text': 'Текст помощи /help',
         'whitelist_on_text': 'Текст при включении белого списка',
         'whitelist_off_text': 'Текст при выключении белого списка',
+        
+        # Шаблоны
         'deleted_template': 'Шаблон удалённого сообщения',
         'edited_template': 'Шаблон редактированного сообщения',
         'edited_fast_template': 'Шаблон быстрого редактирования',
+        
+        # Конфигурация
         'time_format': 'Формат времени (%d.%m.%Y %H:%M)',
         'bot_name': 'Имя бота в сообщениях',
-        'instruction_link': 'Ссылка на инструкцию'
+        'instruction_link': 'Ссылка на инструкцию',
+        
+        # Иконки медиа
+        'photo_icon': 'Иконка фото',
+        'video_icon': 'Иконка видео',
+        'voice_icon': 'Иконка голосового',
+        'audio_icon': 'Иконка аудио',
+        'document_icon': 'Иконка документа',
+        'animation_icon': 'Иконка GIF',
+        'video_note_icon': 'Иконка видео-кружка',
+        'sticker_icon': 'Иконка стикера',
+        'contact_icon': 'Иконка контакта',
+        'location_icon': 'Иконка геолокации',
+        'poll_icon': 'Иконка опроса',
+        'unknown_icon': 'Иконка неизвестного типа',
+        
+        # Кнопки интерфейса
+        'btn_copy_username': 'Кнопка копирования username',
+        'btn_instruction': 'Кнопка инструкции',
+        'btn_back': 'Кнопка "Назад"',
+        'btn_settings_edits': 'Название кнопки редактирования',
+        'btn_settings_deletes': 'Название кнопки удаления',
+        'btn_settings_blur': 'Название кнопки блюра',
+        'btn_turn_on': 'Кнопка включения',
+        'btn_turn_off': 'Кнопка выключения',
+        
+        # Заголовки и описания
+        'settings_title': 'Заголовок страницы настроек',
+        'settings_description': 'Описание страницы настроек',
+        'setting_edits_title': 'Заголовок настройки редактирования',
+        'setting_edits_desc': 'Описание настройки редактирования',
+        'setting_deletes_title': 'Заголовок настройки удаления',
+        'setting_deletes_desc': 'Описание настройки удаления',
+        'setting_blur_title': 'Заголовок настройки блюра',
+        'setting_blur_desc': 'Описание настройки блюра',
+        
+        # Сообщения
+        'msg_enabled': 'Сообщение "Включено"',
+        'msg_disabled': 'Сообщение "Выключено"',
+        'msg_saved': 'Сообщение "Сохранено"',
+        'msg_cancelled': 'Сообщение "Отменено"',
+        'msg_reset_confirm': 'Подтверждение сброса настроек',
+        'msg_reset_success': 'Сообщение об успешном сбросе',
+        
+        # Заголовки дизайна
+        'design_main_title': 'Заголовок главной дизайн-панели',
+        'design_images_title': 'Заголовок раздела изображений',
+        'design_texts_title': 'Заголовок раздела текстов',
+        'design_templates_title': 'Заголовок раздела шаблонов',
+        'design_config_title': 'Заголовок раздела настроек',
+        'design_icons_title': 'Заголовок раздела иконок',
+        
+        # Названия кнопок дизайна
+        'design_btn_images': 'Название кнопки "Изображения"',
+        'design_btn_texts': 'Название кнопки "Тексты"',
+        'design_btn_templates': 'Название кнопки "Шаблоны"',
+        'design_btn_config': 'Название кнопки "Настройки"',
+        'design_btn_icons': 'Название кнопки "Иконки"',
+        'design_btn_formatting': 'Название кнопки "Форматирование"',
+        'design_btn_reset': 'Название кнопки "Сброс"',
+        
+        # Эмодзи
+        'emoji_success': 'Эмодзи успеха',
+        'emoji_danger': 'Эмодзи ошибки',
+        'emoji_warning': 'Эмодзи предупреждения',
+        'emoji_info': 'Эмодзи информации'
     }
     return descriptions.get(key, f'Настройка {key}')
 
@@ -562,76 +695,66 @@ def notify_edited(owner_id, row, old_content, new_content, edit_num):
     else:
         send_msg(owner_id, text)
 
-# ===== КЛАВИАТУРЫ =====
+# ===== КЛАВИАТУРЫ С КАСТОМИЗАЦИЕЙ =====
 def kb_start():
     bot_name = get_custom_setting('bot_name')
     instruction_link = get_custom_setting('instruction_link')
+    btn_copy_text = get_custom_setting('btn_copy_username').replace('{bot_name}', bot_name)
+    btn_instruction_text = get_custom_setting('btn_instruction')
+    
     return {"inline_keyboard": [
-        [{"text": f"📋 Скопировать {bot_name}", "callback_data": "copy_username"}],
-        [{"text": "📖 Подробная инструкция", "url": instruction_link}]
+        [{"text": btn_copy_text, "callback_data": "copy_username"}],
+        [{"text": btn_instruction_text, "url": instruction_link}]
     ]}
-
-# ===== НОВЫЕ ЦВЕТНЫЕ КНОПКИ НАСТРОЕК =====
-def get_settings_toggle_button(setting_key: str, setting_name: str, current_status: bool):
-    """Создает цветную кнопку для настройки с подсветкой"""
-    if current_status:
-        return {
-            "text": f"✅ {setting_name}",
-            "callback_data": f"s_{setting_key}",
-            "style": "success",
-            "icon_custom_emoji_id": "5774022692642492953"  # зеленая галочка
-        }
-    else:
-        return {
-            "text": f"❌ {setting_name}",  
-            "callback_data": f"s_{setting_key}",
-            "style": "danger",
-            "icon_custom_emoji_id": "5774077015388852135"  # красный крестик
-        }
 
 def kb_settings(user_id):
     s = get_settings(user_id)
     
+    # Получаем кастомные тексты кнопок
+    btn_edits = get_custom_setting('btn_settings_edits')
+    btn_deletes = get_custom_setting('btn_settings_deletes') 
+    btn_blur = get_custom_setting('btn_settings_blur')
+    btn_back = get_custom_setting('btn_back')
+    
+    # Получаем эмодзи статуса
+    emoji_on = get_custom_setting('emoji_success', '✅')
+    emoji_off = get_custom_setting('emoji_danger', '❌')
+    
+    e = emoji_on if s["notify_edits"] else emoji_off
+    d = emoji_on if s["notify_deletes"] else emoji_off
+    b = emoji_on if s["blur_media"] else emoji_off
+    
     return {"inline_keyboard": [
-        [get_settings_toggle_button("edits", "Уведомления об изменении", s["notify_edits"])],
-        [get_settings_toggle_button("deletes", "Уведомления об удалении", s["notify_deletes"])],
-        [get_settings_toggle_button("blur", "Блюр удаленных медиа", s["blur_media"])],
-        [{"text": "‹ Назад", "callback_data": "back_start"}]
+        [{"text": f"{e} {btn_edits}", "callback_data": "s_edits"}],
+        [{"text": f"{d} {btn_deletes}", "callback_data": "s_deletes"}],
+        [{"text": f"{b} {btn_blur}", "callback_data": "s_blur"}],
+        [{"text": btn_back, "callback_data": "back_start"}]
     ]}
 
 def kb_detail(stype, val):
-    """Кнопки для детального просмотра с цветами"""
-    if val:
-        btn = {
-            "text": "❌ Выключить", 
-            "callback_data": f"off_{stype}",
-            "style": "danger",
-            "icon_custom_emoji_id": "5774077015388852135"  # красный крестик
-        }
-    else:
-        btn = {
-            "text": "✅ Включить", 
-            "callback_data": f"on_{stype}",
-            "style": "success", 
-            "icon_custom_emoji_id": "5774022692642492953"  # зеленая галочка
-        }
+    btn_on = get_custom_setting('btn_turn_on')
+    btn_off = get_custom_setting('btn_turn_off')
+    btn_back = get_custom_setting('btn_back')
+    
+    btn = (btn_off, f"off_{stype}") if val else (btn_on, f"on_{stype}")
     
     return {"inline_keyboard": [
-        [btn],
-        [{"text": "‹ Назад", "callback_data": "back_settings"}]
+        [{"text": btn[0], "callback_data": btn[1]}],
+        [{"text": btn_back, "callback_data": "back_settings"}]
     ]}
 
-# ===== ДИЗАЙН ПАНЕЛЬ =====
+# ===== ДИЗАЙН ПАНЕЛЬ С ПОЛНОЙ КАСТОМИЗАЦИЕЙ =====
 def kb_design_main():
-    """Главное меню дизайн-панели"""
+    """Главное меню дизайн-панели с кастомными названиями"""
     return {"inline_keyboard": [
-        [{"text": "📷 Изображения", "callback_data": "design_images"}],
-        [{"text": "📝 Тексты", "callback_data": "design_texts"}],
-        [{"text": "🎨 Шаблоны", "callback_data": "design_templates"}],
-        [{"text": "⚙️ Настройки", "callback_data": "design_config"}],
-        [{"text": "🔧 Иконки", "callback_data": "design_icons"}],
-        [{"text": "🎭 Форматирование", "callback_data": "design_formatting"}],
-        [{"text": "🔄 Сброс", "callback_data": "design_reset"}]
+        [{"text": get_custom_setting('design_btn_images'), "callback_data": "design_images"}],
+        [{"text": get_custom_setting('design_btn_texts'), "callback_data": "design_texts"}],
+        [{"text": get_custom_setting('design_btn_templates'), "callback_data": "design_templates"}],
+        [{"text": get_custom_setting('design_btn_config'), "callback_data": "design_config"}],
+        [{"text": get_custom_setting('design_btn_icons'), "callback_data": "design_icons"}],
+        [{"text": get_custom_setting('design_btn_formatting'), "callback_data": "design_formatting"}],
+        [{"text": "🌈 Кнопки интерфейса", "callback_data": "design_interface"}],
+        [{"text": get_custom_setting('design_btn_reset'), "callback_data": "design_reset"}]
     ]}
 
 def kb_design_images():
@@ -686,6 +809,84 @@ def kb_design_icons():
         [{"text": "‹ Назад", "callback_data": "design_main"}]
     ]}
 
+def kb_design_interface():
+    """Меню настройки кнопок интерфейса"""
+    return {"inline_keyboard": [
+        [{"text": "🏠 Кнопки главного меню", "callback_data": "interface_main"}],
+        [{"text": "⚙️ Кнопки настроек", "callback_data": "interface_settings"}],
+        [{"text": "🎨 Кнопки дизайн-панели", "callback_data": "interface_design"}],
+        [{"text": "📝 Заголовки разделов", "callback_data": "interface_titles"}],
+        [{"text": "💬 Системные сообщения", "callback_data": "interface_messages"}],
+        [{"text": "🔘 Эмодзи статусов", "callback_data": "interface_emojis"}],
+        [{"text": "‹ Назад", "callback_data": "design_main"}]
+    ]}
+
+def kb_interface_main():
+    """Настройка кнопок главного меню"""
+    return {"inline_keyboard": [
+        [{"text": "📋 Кнопка копирования", "callback_data": "edit_btn_copy_username"}],
+        [{"text": "📖 Кнопка инструкции", "callback_data": "edit_btn_instruction"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_interface_settings():
+    """Настройка кнопок настроек"""
+    return {"inline_keyboard": [
+        [{"text": "✏️ Кнопка редактирования", "callback_data": "edit_btn_settings_edits"}],
+        [{"text": "🗑 Кнопка удаления", "callback_data": "edit_btn_settings_deletes"}],
+        [{"text": "🎭 Кнопка блюра", "callback_data": "edit_btn_settings_blur"}],
+        [{"text": "✅ Кнопка включения", "callback_data": "edit_btn_turn_on"}],
+        [{"text": "❌ Кнопка выключения", "callback_data": "edit_btn_turn_off"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_interface_design():
+    """Настройка кнопок дизайн-панели"""
+    return {"inline_keyboard": [
+        [{"text": "📷 Изображения", "callback_data": "edit_design_btn_images"}],
+        [{"text": "📝 Тексты", "callback_data": "edit_design_btn_texts"}],
+        [{"text": "🎨 Шаблоны", "callback_data": "edit_design_btn_templates"}],
+        [{"text": "⚙️ Настройки", "callback_data": "edit_design_btn_config"}],
+        [{"text": "🔧 Иконки", "callback_data": "edit_design_btn_icons"}],
+        [{"text": "🎭 Форматирование", "callback_data": "edit_design_btn_formatting"}],
+        [{"text": "🔄 Сброс", "callback_data": "edit_design_btn_reset"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_interface_titles():
+    """Настройка заголовков разделов"""
+    return {"inline_keyboard": [
+        [{"text": "🎨 Заголовок дизайн-панели", "callback_data": "edit_design_main_title"}],
+        [{"text": "📷 Заголовок изображений", "callback_data": "edit_design_images_title"}],
+        [{"text": "📝 Заголовок текстов", "callback_data": "edit_design_texts_title"}],
+        [{"text": "🎨 Заголовок шаблонов", "callback_data": "edit_design_templates_title"}],
+        [{"text": "⚙️ Заголовок настроек", "callback_data": "edit_design_config_title"}],
+        [{"text": "🔧 Заголовок иконок", "callback_data": "edit_design_icons_title"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_interface_messages():
+    """Настройка системных сообщений"""
+    return {"inline_keyboard": [
+        [{"text": "💾 Сообщение сохранения", "callback_data": "edit_msg_saved"}],
+        [{"text": "❌ Сообщение отмены", "callback_data": "edit_msg_cancelled"}],
+        [{"text": "✅ Сообщение включения", "callback_data": "edit_msg_enabled"}],
+        [{"text": "❌ Сообщение выключения", "callback_data": "edit_msg_disabled"}],
+        [{"text": "🔄 Подтверждение сброса", "callback_data": "edit_msg_reset_confirm"}],
+        [{"text": "✅ Успех сброса", "callback_data": "edit_msg_reset_success"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
+def kb_interface_emojis():
+    """Настройка эмодзи статусов"""
+    return {"inline_keyboard": [
+        [{"text": "✅ Эмодзи успеха", "callback_data": "edit_emoji_success"}],
+        [{"text": "❌ Эмодзи ошибки", "callback_data": "edit_emoji_danger"}],
+        [{"text": "⚠️ Эмодзи предупреждения", "callback_data": "edit_emoji_warning"}],
+        [{"text": "ℹ️ Эмодзи информации", "callback_data": "edit_emoji_info"}],
+        [{"text": "‹ Назад", "callback_data": "design_interface"}]
+    ]}
+
 def kb_design_formatting():
     """Меню форматирования текста"""
     return {"inline_keyboard": [
@@ -718,10 +919,30 @@ def kb_design_preview(setting_key):
     
     return {"inline_keyboard": buttons}
 
+# ===== ДИНАМИЧЕСКИЕ ТЕКСТЫ НАСТРОЕК =====
+def get_setting_text(stype):
+    """Получает текст настройки с кастомизацией"""
+    if stype == "edits":
+        title = get_custom_setting('setting_edits_title', '✏️ Уведомления об изменении')
+        desc = get_custom_setting('setting_edits_desc', 'Если ваш собеседник изменит любое сообщение, бот мгновенно сохранит вам его старую и новую версию.')
+        return f"<b>{title}</b>\n\nКак это работает?\n<blockquote>{desc}</blockquote>"
+    
+    elif stype == "deletes":
+        title = get_custom_setting('setting_deletes_title', '🗑️ Уведомления об удалении')
+        desc = get_custom_setting('setting_deletes_desc', 'Если ваш собеседник удалит любое сообщение, бот мгновенно сохранит его вам.')
+        return f"<b>{title}</b>\n\nКак это работает?\n<blockquote>{desc}</blockquote>"
+    
+    elif stype == "blur":
+        title = get_custom_setting('setting_blur_title', '🎭 Блюр удаленных медиа')
+        desc = get_custom_setting('setting_blur_desc', 'Все удаленные медиа/фото будут приходить с эффектом блюра. Это особенно полезно, если вы находитесь в общественном месте.')
+        return f"<b>{title}</b>\n\nКак это работает?\n<blockquote>{desc}</blockquote>"
+    
+    return "Настройка не найдена"
+
 SETTING_TEXTS = {
-    "edits": "<b>✏️ Уведомления об изменении</b>\n\nКак это работает?\n<blockquote>Если ваш собеседник изменит любое сообщение, бот мгновенно сохранит вам его старую и новую версию.</blockquote>",
-    "deletes": "<b>🗑️ Уведомления об удалении</b>\n\nКак это работает?\n<blockquote>Если ваш собеседник удалит любое сообщение, бот мгновенно сохранит его вам.</blockquote>",
-    "blur": "<b>🎭 Блюр удаленных медиа</b>\n\nКак это работает?\n<blockquote>Все удаленные медиа/фото будут приходить с эффектом блюра. Это особенно полезно, если вы находитесь в общественном месте.</blockquote>",
+    "edits": get_setting_text("edits"),
+    "deletes": get_setting_text("deletes"), 
+    "blur": get_setting_text("blur")
 }
 
 SETTING_KEYS = {"edits": "notify_edits", "deletes": "notify_deletes", "blur": "blur_media"}
@@ -802,24 +1023,68 @@ def handle_design_callback(cb):
     
     elif data == "design_icons":
         edit_txt(chat_id, msg_id,
-            "🔧 <b>Настройка иконок</b>\n\nВыберите иконку для изменения:\n\n"
-            "💡 <i>Используйте эмодзи или текст</i>",
+            get_custom_setting('design_icons_title', '🔧 Настройка иконок') + "\n\n" + 
+            get_custom_setting('design_icons_desc', 'Выберите иконку для изменения:\n\n💡 Используйте эмодзи или текст'),
             markup=kb_design_icons())
+        answer_cb(cb_id)
+    
+    elif data == "design_interface":
+        edit_txt(chat_id, msg_id,
+            "🌈 <b>Настройка кнопок интерфейса</b>\n\nВыберите раздел для настройки:\n\n"
+            "💡 <i>Здесь можно изменить все тексты кнопок и элементов интерфейса</i>",
+            markup=kb_design_interface())
+        answer_cb(cb_id)
+    
+    # Обработка подменю интерфейса
+    elif data == "interface_main":
+        edit_txt(chat_id, msg_id,
+            "🏠 <b>Кнопки главного меню</b>\n\nНастройка кнопок стартового экрана:",
+            markup=kb_interface_main())
+        answer_cb(cb_id)
+    
+    elif data == "interface_settings":
+        edit_txt(chat_id, msg_id,
+            "⚙️ <b>Кнопки настроек</b>\n\nНастройка кнопок в меню настроек:",
+            markup=kb_interface_settings())
+        answer_cb(cb_id)
+    
+    elif data == "interface_design":
+        edit_txt(chat_id, msg_id,
+            "🎨 <b>Кнопки дизайн-панели</b>\n\nНастройка названий разделов дизайна:",
+            markup=kb_interface_design())
+        answer_cb(cb_id)
+    
+    elif data == "interface_titles":
+        edit_txt(chat_id, msg_id,
+            "📝 <b>Заголовки разделов</b>\n\nНастройка заголовков в дизайн-панели:",
+            markup=kb_interface_titles())
+        answer_cb(cb_id)
+    
+    elif data == "interface_messages":
+        edit_txt(chat_id, msg_id,
+            "💬 <b>Системные сообщения</b>\n\nНастройка текстов уведомлений:",
+            markup=kb_interface_messages())
+        answer_cb(cb_id)
+    
+    elif data == "interface_emojis":
+        edit_txt(chat_id, msg_id,
+            "🔘 <b>Эмодзи статусов</b>\n\nНастройка эмодзи для разных состояний:",
+            markup=kb_interface_emojis())
         answer_cb(cb_id)
     
     elif data == "design_formatting":
         edit_txt(chat_id, msg_id,
             "🎭 <b>Форматирование текста</b>\n\nИспользуйте HTML теги для форматирования:\n\n"
             "📝 <b>Доступные теги:</b>\n"
-            "• <code>&lt;b&gt;жирный</b></code> — <b>жирный</b>\n"
-            "• <code><i&gt;курсив</i></code> — <i>курсив</i>\n"
-            "• <code><u&gt;подчёркнутый&lt;/u&gt;</code> — <u>подчёркнутый</u>\n"
-            "• <code><s>зачёркнутый</s></code> — <s>зачёркнутый</s>\n"
-            "• <code><code>код</code></code> — <code>код</code>\n"
-            "• <code><spoiler>спойлер&lt;/spoiler&gt;</code> — <spoiler>спойлер</spoiler>\n"
-            "• <code><blockquote>цитата&lt;/blockquote></code>\n"
-            "• <code>&lt;a href=\"url\">ссылка&lt;/a&gt;</code>\n"
-            "• <code>&lt;pre>моноширинный блок</pre></code>",
+            "• <code>&lt;b&gt;жирный&lt;/b&gt;</code> — <b>жирный</b>\n"
+            "• <code>&lt;i&gt;курсив&lt;/i&gt;</code> — <i>курсив</i>\n"
+            "• <code>&lt;u&gt;подчёркнутый&lt;/u&gt;</code> — <u>подчёркнутый</u>\n"
+            "• <code>&lt;s&gt;зачёркнутый&lt;/s&gt;</code> — <s>зачёркнутый</s>\n"
+            "• <code>&lt;code&gt;код&lt;/code&gt;</code> — <code>код</code>\n"
+            "• <code>&lt;spoiler&gt;спойлер&lt;/spoiler&gt;</code> — <spoiler>спойлер</spoiler>\n"
+            "• <code>&lt;blockquote&gt;цитата&lt;/blockquote&gt;</code>\n"
+            "• <code>&lt;a href=\"url\"&gt;ссылка&lt;/a&gt;</code>\n"
+            "• <code>&lt;pre&gt;моноширинный блок&lt;/pre&gt;</code>",
             markup=kb_design_formatting())
         answer_cb(cb_id)
     
@@ -1166,8 +1431,11 @@ def on_start(chat_id, user_id, username, first_name):
 
 def on_settings(chat_id, user_id):
     settings_image = get_custom_setting('settings_image')
+    settings_title = get_custom_setting('settings_title', '⚙️ Настройки')
+    settings_desc = get_custom_setting('settings_description', 'Выберите параметр для изменения:')
+    
     send_photo_msg(chat_id, settings_image,
-        caption="<b>⚙️ Настройки</b>\n\nВыберите параметр для изменения:",
+        caption=f"<b>{settings_title}</b>\n\n{settings_desc}",
         markup=kb_settings(user_id))
 
 def on_callback(cb):
@@ -1212,7 +1480,7 @@ def on_callback(cb):
         s = get_settings(user_id)
         key = SETTING_KEYS.get(stype)
         if key:
-            edit(SETTING_TEXTS[stype], kb_detail(stype, s[key]))
+            edit(get_setting_text(stype), kb_detail(stype, s[key]))
             answer_cb(cb_id)
 
     elif data.startswith("on_"):
@@ -1220,16 +1488,16 @@ def on_callback(cb):
         key = SETTING_KEYS.get(stype)
         if key:
             set_setting(user_id, key, 1)
-            edit(SETTING_TEXTS[stype], kb_detail(stype, 1))
-            answer_cb(cb_id, "✅ Включено", alert=True)
+            edit(get_setting_text(stype), kb_detail(stype, 1))
+            answer_cb(cb_id, get_custom_setting('msg_enabled', '✅ Включено'), alert=True)
 
     elif data.startswith("off_"):
         stype = data[4:]
         key = SETTING_KEYS.get(stype)
         if key:
             set_setting(user_id, key, 0)
-            edit(SETTING_TEXTS[stype], kb_detail(stype, 0))
-            answer_cb(cb_id, "❌ Выключено", alert=True)
+            edit(get_setting_text(stype), kb_detail(stype, 0))
+            answer_cb(cb_id, get_custom_setting('msg_disabled', '❌ Выключено'), alert=True)
 
 def on_business_connection(bc):
     user = bc["user"]
@@ -2267,3 +2535,4 @@ api("setMyCommands", commands=[
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
+    

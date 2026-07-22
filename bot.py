@@ -24,9 +24,9 @@ whitelist_users = set()
 
 whitelist_notified = set()
 
-DB_PATH = "/home/v373m3nt5/spy.db"
+DB_PATH = os.getenv('DATABASE_PATH', 'spy.db')
 
-WEBHOOK_URL = "https://v373m3nt5.pythonanywhere.com/webhook"
+WEBHOOK_URL = os.getenv('WEBHOOK_URL', 'https://telegram-bot-lggs.onrender.com/webhook')
 
 BOT_USERNAME = "@v373ments_bot"
 
@@ -3801,5 +3801,5 @@ api("setMyCommands", commands=[
 ])
 
 if __name__ == "__main__":
-
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

@@ -118,7 +118,14 @@ DEFAULT_SETTINGS = {
     'emoji_success': "✅",
     'emoji_danger': "❌",
     'emoji_warning': "⚠️",
-    'emoji_info': "ℹ️"
+    'emoji_info': "ℹ️",
+    
+    # Управление функциями бота
+    'cmd_start_enabled': "1",
+    'cmd_settings_enabled': "1", 
+    'cmd_help_enabled': "1",
+    'cmd_stats_enabled': "1",
+    'cmd_chat_enabled': "1"
 }
 
 # ===== БАЗА ДАННЫХ =====
@@ -533,6 +540,20 @@ def format_time():
     time_format = get_custom_setting('time_format', '%d.%m.%Y %H:%M')
     return datetime.now().strftime(time_format)
 
+def is_command_enabled(command):
+    """Проверяет, включена ли команда"""
+    cmd_map = {
+        "/start": "cmd_start_enabled",
+        "/settings": "cmd_settings_enabled", 
+        "/help": "cmd_help_enabled",
+        "/stats": "cmd_stats_enabled",
+        "/chat": "cmd_chat_enabled"
+    }
+    setting_key = cmd_map.get(command)
+    if setting_key:
+        return get_custom_setting(setting_key, "1") == "1"
+    return True
+
 # ===== TELEGRAM API =====
 def api(method, **kwargs):
     try:
@@ -784,6 +805,7 @@ def kb_design_main():
         [{"text": get_custom_setting('design_btn_formatting'), "callback_data": "design_formatting"}],
         [{"text": "🌈 Кнопки интерфейса", "callback_data": "design_interface"}],
         [{"text": "🎨 Стили кнопок", "callback_data": "design_styles"}],
+        [{"text": "⚙️ Управление функциями", "callback_data": "design_commands"}],
         [{"text": get_custom_setting('design_btn_reset'), "callback_data": "design_reset"}]
     ]}
 
@@ -947,6 +969,28 @@ def kb_design_formatting():
     return {"inline_keyboard": [
         [{"text": "🆔 Помощник HTML", "callback_data": "format_helper"}],
         [{"text": "📋 Примеры форматирования", "callback_data": "format_examples"}],
+        [{"text": "🎭 Вставка эмодзи по ID", "callback_data": "emoji_helper"}],
+        [{"text": "‹ Назад", "callback_data": "design_main"}]
+    ]}
+
+def kb_design_commands():
+    """Меню управления функциями бота"""
+    start_enabled = get_custom_setting('cmd_start_enabled', '1') == '1'
+    settings_enabled = get_custom_setting('cmd_settings_enabled', '1') == '1'
+    help_enabled = get_custom_setting('cmd_help_enabled', '1') == '1'
+    stats_enabled = get_custom_setting('cmd_stats_enabled', '1') == '1'
+    chat_enabled = get_custom_setting('cmd_chat_enabled', '1') == '1'
+    
+    def cmd_button(text, cmd_key, is_enabled):
+        status = "✅" if is_enabled else "❌"
+        return {"text": f"{status} {text}", "callback_data": f"toggle_cmd_{cmd_key}"}
+    
+    return {"inline_keyboard": [
+        [cmd_button("Команда /start", "start", start_enabled)],
+        [cmd_button("Команда /settings", "settings", settings_enabled)],
+        [cmd_button("Команда /help", "help", help_enabled)],
+        [cmd_button("Команда /stats", "stats", stats_enabled)],
+        [cmd_button("Экспорт чатов /chat", "chat", chat_enabled)],
         [{"text": "‹ Назад", "callback_data": "design_main"}]
     ]}
 
@@ -1183,8 +1227,16 @@ def handle_design_callback(cb):
             "• <code>&lt;spoiler&gt;спойлер&lt;/spoiler&gt;</code> — <spoiler>спойлер</spoiler>\n"
             "• <code>&lt;blockquote&gt;цитата&lt;/blockquote&gt;</code>\n"
             "• <code>&lt;a href=\"url\"&gt;ссылка&lt;/a&gt;</code>\n"
-            "• <code>&lt;pre&gt;моноширинный блок&lt;/pre&gt;</code>",
+            "• <code>&lt;pre&gt;моноширинный блок&lt;/pre&gt;</code>\n\n"
+            "🎭 <b>Эмодзи по ID:</b> можно использовать Telegram Premium эмодзи",
             markup=kb_design_formatting())
+        answer_cb(cb_id)
+    
+    elif data == "design_commands":
+        edit_txt(chat_id, msg_id,
+            "⚙️ <b>Управление функциями бота</b>\n\nВключите или отключите команды:\n\n"
+            "💡 <i>Отключенные команды не будут работать для пользователей</i>",
+            markup=kb_design_commands())
         answer_cb(cb_id)
     
     elif data == "format_helper":
@@ -1230,6 +1282,45 @@ def handle_design_callback(cb):
             start_tag, end_tag, description = format_codes[format_type]
             code_example = f"{start_tag}ваш текст{end_tag}"
             answer_cb(cb_id, f"📋 Код для {description}:\n{code_example}", alert=True)
+    
+    elif data.startswith("toggle_cmd_"):
+        cmd_type = data[11:]  # убираем "toggle_cmd_"
+        setting_key = f"cmd_{cmd_type}_enabled"
+        current_value = get_custom_setting(setting_key, "1")
+        new_value = "0" if current_value == "1" else "1"
+        set_custom_setting(setting_key, new_value)
+        
+        cmd_names = {
+            "start": "/start",
+            "settings": "/settings", 
+            "help": "/help",
+            "stats": "/stats",
+            "chat": "/chat"
+        }
+        cmd_name = cmd_names.get(cmd_type, cmd_type)
+        status = "включена" if new_value == "1" else "отключена"
+        
+        edit_txt(chat_id, msg_id,
+            "⚙️ <b>Управление функциями бота</b>\n\nВключите или отключите команды:\n\n"
+            "💡 <i>Отключенные команды не будут работать для пользователей</i>",
+            markup=kb_design_commands())
+        answer_cb(cb_id, f"Команда {cmd_name} {status}", alert=True)
+    
+    elif data == "emoji_helper":
+        edit_txt(chat_id, msg_id,
+            "🎭 <b>Помощник эмодзи</b>\n\n"
+            "📝 <b>Как использовать:</b>\n"
+            "• Обычные эмодзи: просто скопируйте и вставьте 😀\n"
+            "• Telegram Premium эмодзи: используйте тег\n"
+            "  <code>&lt;tg-emoji emoji-id=\"ID\"&gt;😀&lt;/tg-emoji&gt;</code>\n\n"
+            "🔍 <b>Где найти ID эмодзи:</b>\n"
+            "1. Откройте @BotFather\n"
+            "2. Отправьте Premium эмодзи\n"
+            "3. Скопируйте его ID из ответа\n\n"
+            "💡 <b>Пример:</b>\n"
+            "<code>&lt;tg-emoji emoji-id=\"5789..\"&gt;🔥&lt;/tg-emoji&gt;</code>",
+            markup=kb_design_formatting())
+        answer_cb(cb_id)
     
     # Отмена редактирования
     elif data == "cancel_edit":
@@ -1396,45 +1487,31 @@ def apply_color_scheme(scheme):
     schemes = {
         "green": {
             "btn_style_success": "success",
-            "btn_style_danger": "secondary", 
-            "emoji_success": "✅",
-            "emoji_danger": "⭕"
+            "btn_style_danger": "secondary"
         },
         "red": {
-            "btn_style_success": "secondary",
-            "btn_style_danger": "danger",
-            "emoji_success": "🔘",
-            "emoji_danger": "❌"
+            "btn_style_success": "danger",
+            "btn_style_danger": "secondary"
         },
         "blue": {
             "btn_style_success": "primary",
-            "btn_style_danger": "secondary",
-            "emoji_success": "🔵", 
-            "emoji_danger": "⚪"
+            "btn_style_danger": "secondary"
         },
         "yellow": {
-            "btn_style_success": "warning",
-            "btn_style_danger": "secondary",
-            "emoji_success": "🟡",
-            "emoji_danger": "⚫"
+            "btn_style_success": "primary",
+            "btn_style_danger": "secondary"
         },
         "purple": {
-            "btn_style_success": "info",
-            "btn_style_danger": "secondary", 
-            "emoji_success": "🟣",
-            "emoji_danger": "⚪"
+            "btn_style_success": "primary",
+            "btn_style_danger": "secondary"
         },
         "dark": {
             "btn_style_success": "secondary",
-            "btn_style_danger": "danger",
-            "emoji_success": "⚪",
-            "emoji_danger": "⚫"
+            "btn_style_danger": "primary"
         },
         "light": {
             "btn_style_success": "success",
-            "btn_style_danger": "light",
-            "emoji_success": "✅",
-            "emoji_danger": "❌"
+            "btn_style_danger": "secondary"
         }
     }
     
@@ -1640,8 +1717,9 @@ def on_callback(cb):
     if (data.startswith("design_") or data.startswith("edit_") or data.startswith("preview_") or 
         data.startswith("save_") or data.startswith("delete_") or data.startswith("fmt_") or 
         data.startswith("interface_") or data.startswith("scheme_") or data.startswith("demo_") or
+        data.startswith("toggle_cmd_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
-        data == "format_examples" or data == "preview_demo"):
+        data == "format_examples" or data == "preview_demo" or data == "emoji_helper"):
         handle_design_callback(cb)
         return
 
@@ -2523,11 +2601,18 @@ def on_message(msg):
 
     # Обычные команды
     if text == "/start":
-        on_start(chat_id, user_id, u.get("username",""), u.get("first_name",""))
+        if is_command_enabled("/start"):
+            on_start(chat_id, user_id, u.get("username",""), u.get("first_name",""))
+        else:
+            send_msg(chat_id, "⚠️ Эта команда временно отключена администратором.")
     elif text == "/settings":
-        on_settings(chat_id, user_id)
+        if is_command_enabled("/settings"):
+            on_settings(chat_id, user_id)
+        else:
+            send_msg(chat_id, "⚠️ Эта команда временно отключена администратором.")
     elif text == "/stats":
-        with get_db() as conn:
+        if is_command_enabled("/stats"):
+            with get_db() as conn:
             total_del = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=? AND deleted=1", (user_id,)).fetchone()[0]
             total_edit = conn.execute("SELECT COUNT(*) FROM edits WHERE owner_id=?", (user_id,)).fetchone()[0]
             total_msg = conn.execute("SELECT COUNT(*) FROM messages WHERE owner_id=?", (user_id,)).fetchone()[0]
@@ -2597,7 +2682,10 @@ def on_message(msg):
         except:
             send_msg(chat_id, "❌ Использование: /spystats ID")
     elif text.startswith("/chat "):
-        handle_chat_export(chat_id, user_id, text[6:])
+        if is_command_enabled("/chat"):
+            handle_chat_export(chat_id, user_id, text[6:])
+        else:
+            send_msg(chat_id, "⚠️ Эта команда временно отключена администратором.")
     elif text == "/whitelist" and is_admin(user_id):
         if get_whitelist_mode():
             set_admin_state(user_id, {"action": "whitelist_off"})
@@ -2663,8 +2751,11 @@ def on_message(msg):
                     text_out += f"👤 {name} ({uname}) — <code>{uid}</code>\n"
             send_msg(chat_id, text_out)
     elif text == "/help":
-        help_text = get_custom_setting('help_text')
-        send_msg(chat_id, help_text)
+        if is_command_enabled("/help"):
+            help_text = get_custom_setting('help_text')
+            send_msg(chat_id, help_text)
+        else:
+            send_msg(chat_id, "⚠️ Эта команда временно отключена администратором.")
 
 # ===== WEBHOOK =====
 @app.route('/webhook', methods=['POST'])

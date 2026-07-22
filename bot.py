@@ -1170,6 +1170,9 @@ def handle_design_callback(cb):
     chat_id = cb["message"]["chat"]["id"]
     msg_id = cb["message"]["message_id"]
     
+    # ОТЛАДКА: Логируем все коллбэки дизайна
+    print(f"[DEBUG] Design callback: data='{data}', user_id={user_id}")
+    
     if not is_admin(user_id):
         answer_cb(cb_id, "⛔ Нет доступа", alert=True)
         return
@@ -1389,6 +1392,7 @@ def handle_design_callback(cb):
         answer_cb(cb_id)
     
     elif data == "design_formatting":
+        print(f"[DEBUG] Processing design_formatting callback")
         edit_txt(chat_id, msg_id,
             "🎭 <b>Форматирование текста</b>\n\nИспользуйте HTML теги для форматирования:\n\n"
             "📝 <b>Доступные теги:</b>\n"
@@ -1413,6 +1417,7 @@ def handle_design_callback(cb):
         answer_cb(cb_id)
     
     elif data == "format_helper":
+        print(f"[DEBUG] Processing format_helper callback")
         edit_txt(chat_id, msg_id,
             "🆔 <b>Помощник форматирования</b>\n\nВыберите тип форматирования:\n\n"
             "💡 <i>Нажмите на кнопку, чтобы получить код для вставки</i>",
@@ -1454,9 +1459,9 @@ def handle_design_callback(cb):
         if format_type in format_codes:
             start_tag, end_tag, description = format_codes[format_type]
             code_example = f"{start_tag}ваш текст{end_tag}"
-            # ТЕСТ: Отправим отдельным сообщением вместо alert
+            # Отправляем отдельное сообщение с кодом
             send_msg(chat_id, f"📋 <b>Код для {description}:</b>\n\n<code>{code_example}</code>\n\n💡 Скопируйте и используйте в своих текстах")
-            answer_cb(cb_id)
+            answer_cb(cb_id, f"✅ Код для {description} отправлен!", alert=True)
         else:
             answer_cb(cb_id, "❌ Неизвестный тип форматирования", alert=True)
     
@@ -1886,7 +1891,8 @@ def on_callback(cb):
         data.startswith("toggle_cmd_") or data.startswith("style_") or data.startswith("set_btn_color_") or 
         data.startswith("apply_color_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
-        data == "format_examples" or data == "preview_demo" or data == "emoji_helper"):
+        data == "format_examples" or data == "preview_demo" or data == "emoji_helper" or
+        data == "design_formatting"):
         handle_design_callback(cb)
         return
 

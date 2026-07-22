@@ -1057,11 +1057,11 @@ def kb_color_schemes():
     ]}
 
 def kb_design_formatting():
-    """Меню форматирования текста"""
+    """Меню форматирования текста - ПЕРЕПИСАНО ЗАНОВО"""
     return {"inline_keyboard": [
-        [{"text": "🆔 Помощник HTML", "callback_data": "format_helper"}],
-        [{"text": "📋 Примеры форматирования", "callback_data": "format_examples"}],
-        [{"text": "🎭 Вставка эмодзи по ID", "callback_data": "emoji_helper"}],
+        [{"text": "🔧 HTML Помощник", "callback_data": "html_helper"}],
+        [{"text": "📋 Примеры кода", "callback_data": "html_examples"}], 
+        [{"text": "🎭 Эмодзи ID", "callback_data": "emoji_id_help"}],
         [{"text": "‹ Назад", "callback_data": "design_main"}]
     ]}
 
@@ -1086,14 +1086,15 @@ def kb_design_commands():
         [{"text": "‹ Назад", "callback_data": "design_main"}]
     ]}
 
-def kb_format_helper():
-    """Помощник форматирования"""
+def kb_html_helper():
+    """Помощник HTML тегов - НОВАЯ ВЕРСИЯ"""
     return {"inline_keyboard": [
-        [{"text": "📝 <b>Жирный</b>", "callback_data": "fmt_bold"}, {"text": "📝 <i>Курсив</i>", "callback_data": "fmt_italic"}],
-        [{"text": "📝 <code>Код</code>", "callback_data": "fmt_code"}, {"text": "📝 <s>Зачёркнутый</s>", "callback_data": "fmt_strike"}],
-        [{"text": "📝 <u>Подчёркнутый</u>", "callback_data": "fmt_underline"}, {"text": "📝 <spoiler>Спойлер</spoiler>", "callback_data": "fmt_spoiler"}],
-        [{"text": "📝 Цитата", "callback_data": "fmt_quote"}, {"text": "📝 Ссылка", "callback_data": "fmt_link"}],
-        [{"text": "📝 Моноширинный блок", "callback_data": "fmt_pre"}],
+        [{"text": "💬 <b>Жирный</b>", "callback_data": "html_bold"}, {"text": "💬 <i>Курсив</i>", "callback_data": "html_italic"}],
+        [{"text": "💬 <code>Код</code>", "callback_data": "html_code"}, {"text": "💬 <s>Зачёркнутый</s>", "callback_data": "html_strike"}],
+        [{"text": "💬 <u>Подчёркнутый</u>", "callback_data": "html_underline"}, {"text": "💬 <spoiler>Спойлер</spoiler>", "callback_data": "html_spoiler"}],
+        [{"text": "💬 Цитата", "callback_data": "html_quote"}, {"text": "💬 Ссылка", "callback_data": "html_link"}],
+        [{"text": "💬 Моноширинный блок", "callback_data": "html_pre"}],
+        [{"text": "🧪 ТЕСТ", "callback_data": "html_test"}],  # ТЕСТОВАЯ КНОПКА
         [{"text": "‹ Назад", "callback_data": "design_formatting"}]
     ]}
 
@@ -1169,9 +1170,6 @@ def handle_design_callback(cb):
     user_id = cb["from"]["id"]
     chat_id = cb["message"]["chat"]["id"]
     msg_id = cb["message"]["message_id"]
-    
-    # ОТЛАДКА: Логируем все коллбэки дизайна
-    print(f"[DEBUG] Design callback: data='{data}', user_id={user_id}")
     
     if not is_admin(user_id):
         answer_cb(cb_id, "⛔ Нет доступа", alert=True)
@@ -1392,20 +1390,19 @@ def handle_design_callback(cb):
         answer_cb(cb_id)
     
     elif data == "design_formatting":
-        print(f"[DEBUG] Processing design_formatting callback")
+        # НОВЫЙ ОБРАБОТЧИК ФОРМАТИРОВАНИЯ
         edit_txt(chat_id, msg_id,
-            "🎭 <b>Форматирование текста</b>\n\nИспользуйте HTML теги для форматирования:\n\n"
-            "📝 <b>Доступные теги:</b>\n"
-            "• <code>&lt;b&gt;жирный&lt;/b&gt;</code> — <b>жирный</b>\n"
-            "• <code>&lt;i&gt;курсив&lt;/i&gt;</code> — <i>курсив</i>\n"
-            "• <code>&lt;u&gt;подчёркнутый&lt;/u&gt;</code> — <u>подчёркнутый</u>\n"
-            "• <code>&lt;s&gt;зачёркнутый&lt;/s&gt;</code> — <s>зачёркнутый</s>\n"
-            "• <code>&lt;code&gt;код&lt;/code&gt;</code> — <code>код</code>\n"
-            "• <code>&lt;spoiler&gt;спойлер&lt;/spoiler&gt;</code> — <spoiler>спойлер</spoiler>\n"
-            "• <code>&lt;blockquote&gt;цитата&lt;/blockquote&gt;</code>\n"
-            "• <code>&lt;a href=\"url\"&gt;ссылка&lt;/a&gt;</code>\n"
-            "• <code>&lt;pre&gt;моноширинный блок&lt;/pre&gt;</code>\n\n"
-            "🎭 <b>Эмодзи по ID:</b> можно использовать Telegram Premium эмодзи",
+            "🔧 <b>ФОРМАТИРОВАНИЕ ТЕКСТА</b>\n\n"
+            "📋 <b>HTML теги для Telegram:</b>\n"
+            "• <b>жирный</b> — <code>&lt;b&gt;текст&lt;/b&gt;</code>\n"
+            "• <i>курсив</i> — <code>&lt;i&gt;текст&lt;/i&gt;</code>\n" 
+            "• <u>подчёркнутый</u> — <code>&lt;u&gt;текст&lt;/u&gt;</code>\n"
+            "• <s>зачёркнутый</s> — <code>&lt;s&gt;текст&lt;/s&gt;</code>\n"
+            "• <code>моноширинный</code> — <code>&lt;code&gt;текст&lt;/code&gt;</code>\n"
+            "• <spoiler>спойлер</spoiler> — <code>&lt;spoiler&gt;текст&lt;/spoiler&gt;</code>\n"
+            "• <blockquote>цитата</blockquote> — <code>&lt;blockquote&gt;текст&lt;/blockquote&gt;</code>\n"
+            "• <a href='#'>ссылка</a> — <code>&lt;a href=\"url\"&gt;текст&lt;/a&gt;</code>\n\n"
+            "🎯 <b>Выберите действие:</b>",
             markup=kb_design_formatting())
         answer_cb(cb_id)
     
@@ -1416,35 +1413,43 @@ def handle_design_callback(cb):
             markup=kb_design_commands())
         answer_cb(cb_id)
     
-    elif data == "format_helper":
-        print(f"[DEBUG] Processing format_helper callback")
+    elif data == "html_helper":
+        # НОВЫЙ HTML ПОМОЩНИК
         edit_txt(chat_id, msg_id,
-            "🆔 <b>Помощник форматирования</b>\n\nВыберите тип форматирования:\n\n"
-            "💡 <i>Нажмите на кнопку, чтобы получить код для вставки</i>",
-            markup=kb_format_helper())
+            "🔧 <b>HTML ПОМОЩНИК</b>\n\n"
+            "💡 <b>Нажмите на кнопку чтобы получить код:</b>\n\n"
+            "Код будет отправлен отдельным сообщением для удобного копирования.",
+            markup=kb_html_helper())
         answer_cb(cb_id)
     
-    elif data == "format_examples":
-        example_text = (
-            "📋 <b>Примеры форматирования:</b>\n\n"
-            "1. <b>Жирный текст</b> — <code>&lt;b&gt;текст</b></code>\n"
-            "2. <i>Курсивный текст</i> — <code>&lt;i&gt;текст&lt;/i&gt;</code>\n"
-            "3. <u>Подчёркнутый</u> — <code><u&gt;текст&lt;/u&gt;</code>\n"
-            "4. <s>Зачёркнутый</s> — <code>&lt;s>текст</s></code>\n"
-            "5. <code>Моноширинный</code> — <code><code&gt;текст&lt;/code&gt;</code>\n"
-            "6. <spoiler>Спойлер</spoiler> — <code><spoiler>текст</spoiler&gt;</code>\n"
-            "7. <blockquote>Цитата</blockquote> — <code><blockquote&gt;текст&lt;/blockquote></code>\n"
-            "8. <a href='https://t.me'>Ссылка</a> — <code><a href=\"url\">текст</a></code>\n\n"
-            "<pre>Моноширинный блок\nс переносом строк</pre>\n"
-            "<code>&lt;pre&gt;текст&lt;/pre&gt;</code>"
+    elif data == "html_examples":
+        # НОВЫЙ ОБРАБОТЧИК ПРИМЕРОВ  
+        examples_text = (
+            "📋 <b>ПРИМЕРЫ HTML КОДА:</b>\n\n"
+            "1️⃣ <b>Жирный</b>: <code>&lt;b&gt;текст&lt;/b&gt;</code>\n"
+            "2️⃣ <i>Курсив</i>: <code>&lt;i&gt;текст&lt;/i&gt;</code>\n"
+            "3️⃣ <u>Подчёркнутый</u>: <code>&lt;u&gt;текст&lt;/u&gt;</code>\n"
+            "4️⃣ <s>Зачёркнутый</s>: <code>&lt;s&gt;текст&lt;/s&gt;</code>\n"
+            "5️⃣ <code>Моноширинный</code>: <code>&lt;code&gt;текст&lt;/code&gt;</code>\n"
+            "6️⃣ <spoiler>Спойлер</spoiler>: <code>&lt;spoiler&gt;текст&lt;/spoiler&gt;</code>\n"
+            "7️⃣ <blockquote>Цитата</blockquote>: <code>&lt;blockquote&gt;текст&lt;/blockquote&gt;</code>\n\n"
+            "🔗 <b>Ссылка:</b> <code>&lt;a href=\"https://site.com\"&gt;текст&lt;/a&gt;</code>\n"
+            "📦 <b>Блок кода:</b> <code>&lt;pre&gt;много строк кода&lt;/pre&gt;</code>"
         )
-        edit_txt(chat_id, msg_id, example_text, markup=kb_design_formatting())
+        edit_txt(chat_id, msg_id, examples_text, markup=kb_design_formatting())
         answer_cb(cb_id)
     
-    # Обработка форматирования
-    elif data.startswith("fmt_"):
-        format_type = data[4:]
-        format_codes = {
+    # НОВАЯ ОБРАБОТКА HTML КНОПОК
+    elif data.startswith("html_"):
+        html_type = data[5:]  # убираем "html_"
+        
+        # СПЕЦИАЛЬНАЯ ТЕСТОВАЯ КНОПКА
+        if html_type == "test":
+            send_msg(chat_id, "🧪 <b>ТЕСТ УСПЕШЕН!</b>\n\nНовая система форматирования работает!")
+            answer_cb(cb_id, "✅ Тест прошел успешно!", alert=True)
+            return
+        
+        html_codes = {
             "bold": ("<b>", "</b>", "жирный текст"),
             "italic": ("<i>", "</i>", "курсив"),
             "code": ("<code>", "</code>", "моноширинный"),
@@ -1453,17 +1458,22 @@ def handle_design_callback(cb):
             "spoiler": ("<spoiler>", "</spoiler>", "спойлер"),
             "quote": ("<blockquote>", "</blockquote>", "цитата"),
             "link": ('<a href="https://example.com">', "</a>", "ссылка"),
-            "pre": ("<pre>", "</pre>", "моноширинный блок")
+            "pre": ("<pre>", "</pre>", "блок кода")
         }
         
-        if format_type in format_codes:
-            start_tag, end_tag, description = format_codes[format_type]
-            code_example = f"{start_tag}ваш текст{end_tag}"
-            # Отправляем отдельное сообщение с кодом
-            send_msg(chat_id, f"📋 <b>Код для {description}:</b>\n\n<code>{code_example}</code>\n\n💡 Скопируйте и используйте в своих текстах")
-            answer_cb(cb_id, f"✅ Код для {description} отправлен!", alert=True)
+        if html_type in html_codes:
+            start_tag, end_tag, description = html_codes[html_type]
+            code_text = f"{start_tag}ваш текст{end_tag}"
+            
+            # Отправляем код отдельным сообщением
+            send_msg(chat_id, 
+                f"📋 <b>Код для {description}:</b>\n\n"
+                f"<code>{code_text}</code>\n\n"
+                f"📌 <b>Результат:</b> {start_tag}ваш текст{end_tag}")
+            
+            answer_cb(cb_id, f"✅ Код отправлен!", alert=True)
         else:
-            answer_cb(cb_id, "❌ Неизвестный тип форматирования", alert=True)
+            answer_cb(cb_id, "❌ Ошибка: неизвестный тип", alert=True)
     
     elif data.startswith("toggle_cmd_"):
         cmd_type = data[11:]  # убираем "toggle_cmd_"
@@ -1488,20 +1498,19 @@ def handle_design_callback(cb):
             markup=kb_design_commands())
         answer_cb(cb_id, f"Команда {cmd_name} {status}", alert=True)
     
-    elif data == "emoji_helper":
-        edit_txt(chat_id, msg_id,
-            "🎭 <b>Помощник эмодзи</b>\n\n"
-            "📝 <b>Как использовать:</b>\n"
-            "• Обычные эмодзи: просто скопируйте и вставьте 😀\n"
-            "• Telegram Premium эмодзи: используйте тег\n"
-            "  <code>&lt;tg-emoji emoji-id=\"ID\"&gt;😀&lt;/tg-emoji&gt;</code>\n\n"
-            "🔍 <b>Где найти ID эмодзи:</b>\n"
-            "1. Откройте @BotFather\n"
-            "2. Отправьте Premium эмодзи\n"
-            "3. Скопируйте его ID из ответа\n\n"
+    elif data == "emoji_id_help":
+        # НОВЫЙ ОБРАБОТЧИК ЭМОДЗИ ID
+        emoji_text = (
+            "🎭 <b>ЭМОДЗИ ПО ID</b>\n\n"
+            "📝 <b>Как использовать Premium эмодзи:</b>\n"
+            "1. Найдите ID эмодзи в @BotFather\n"
+            "2. Используйте тег:\n"
+            "<code>&lt;tg-emoji emoji-id=\"ID\"&gt;😀&lt;/tg-emoji&gt;</code>\n\n"
             "💡 <b>Пример:</b>\n"
-            "<code>&lt;tg-emoji emoji-id=\"5789..\"&gt;🔥&lt;/tg-emoji&gt;</code>",
-            markup=kb_design_formatting())
+            "<code>&lt;tg-emoji emoji-id=\"5789123456\"&gt;🔥&lt;/tg-emoji&gt;</code>\n\n"
+            "⚠️ <b>Работает только с Telegram Premium</b>"
+        )
+        edit_txt(chat_id, msg_id, emoji_text, markup=kb_design_formatting()) 
         answer_cb(cb_id)
     
     # Отмена редактирования
@@ -1887,12 +1896,14 @@ def on_callback(cb):
     # Обработка дизайн-панели
     if (data.startswith("design_") or data.startswith("edit_") or data.startswith("preview_") or 
         data.startswith("save_") or data.startswith("delete_") or data.startswith("fmt_") or 
+        data.startswith("html_") or  # НОВЫЕ HTML КОЛЛБЭКИ
         data.startswith("interface_") or data.startswith("scheme_") or data.startswith("demo_") or
         data.startswith("toggle_cmd_") or data.startswith("style_") or data.startswith("set_btn_color_") or 
         data.startswith("apply_color_") or
         data == "confirm_reset" or data == "cancel_edit" or data == "format_helper" or 
         data == "format_examples" or data == "preview_demo" or data == "emoji_helper" or
-        data == "design_formatting"):
+        data == "design_formatting" or data == "html_helper" or data == "html_examples" or 
+        data == "emoji_id_help" or data == "html_test"):  # ТЕСТ КНОПКА
         handle_design_callback(cb)
         return
 
